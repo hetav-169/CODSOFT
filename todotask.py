@@ -1,45 +1,109 @@
-todo_list = []
+from tkinter import *
+from tkinter import messagebox
 
-while True:
-    print("MY TASKS")
-    print("1. Add Task")
-    print("2. Show Tasks")
-    print("3. Delete Task")
-    print("4. Total Tasks")
-    print("5. Exit")
+def update_count():
+    count_label.config(text="Total Tasks: " + str(task_list.size()))
 
-    option = input("Choose option: ")
-    if option =="1":
-        task = input("What work do you want to add? ")
-        todo_list.append(task)
-        print("Added successfully!")
-    elif option =="2":
-        if len(todo_list) == 0:
-            print("Nothing added yet.")
-        else:
-            print("\nCurrent Tasks:")
-            number = 1
-            for item in todo_list:
-                print(str(number) + ". " + item)
-                number += 1
-    elif option =="3":
-        if len(todo_list) == 0:
-            print("No tasks found.")
-        else:
-            count = 1
-            for item in todo_list:
-                print(str(count) + ". " + item)
-                count += 1
-            remove = int(input("Enter task number: "))
-            if remove >= 1 and remove <= len(todo_list):
-                deleted_task = todo_list.pop(remove - 1)
-                print(deleted_task, "removed.")
-            else:
-                print("Wrong number entered.")
-    elif option =="4":
-        print("Total tasks =", len(todo_list))
-    elif option =="5":
-        print("Closing program...")
-        break
+def add_task():
+    task = task_entry.get()
+
+    if task != "":
+        task_list.insert(END, task)
+        task_entry.delete(0, END)
+        update_count()
     else:
-        print("Please enter a valid option.")
+        messagebox.showwarning("Warning", "Please enter a task!")
+
+def remove_task():
+    try:
+        selected_task = task_list.curselection()[0]
+        task_list.delete(selected_task)
+        update_count()
+    except:
+        messagebox.showwarning("Warning", "Please select a task!")
+
+def clear_tasks():
+    if messagebox.askyesno("Clear All", "Do you want to remove all tasks?"):
+        task_list.delete(0, END)
+        update_count()
+
+root = Tk()
+root.title("To-Do List Application")
+root.geometry("500x600")
+root.resizable(False, False)
+root.config(bg="lightblue")
+
+title = Label(
+    root,
+    text="TO-DO LIST",
+    font=("Arial", 22, "bold"),
+    bg="lightblue",
+    fg="darkblue"
+)
+title.pack(pady=15)
+
+task_entry = Entry(
+    root,
+    width=30,
+    font=("Arial", 14)
+)
+task_entry.pack(pady=10)
+
+add_btn = Button(
+    root,
+    text="Add Task",
+    width=15,
+    font=("Arial", 12, "bold"),
+    bg="green",
+    fg="white",
+    command=add_task
+)
+add_btn.pack(pady=5)
+task_list = Listbox(
+    root,
+    width=40,
+    height=15,
+    font=("Arial", 12)
+)
+task_list.pack(pady=15)
+
+count_label = Label(
+    root,
+    text="Total Tasks: 0",
+    font=("Arial", 12, "bold"),
+    bg="lightblue",
+    fg="darkgreen"
+)
+count_label.pack()
+
+remove_btn = Button(
+    root,
+    text="Remove Task",
+    width=15,
+    font=("Arial", 12, "bold"),
+    bg="red",
+    fg="white",
+    command=remove_task
+)
+remove_btn.pack(pady=5)
+
+clear_btn = Button(
+    root,
+    text="Clear All",
+    width=15,
+    font=("Arial", 12, "bold"),
+    bg="orange",
+    fg="white",
+    command=clear_tasks
+)
+clear_btn.pack(pady=5)
+footer = Label(
+    root,
+    text="Made by Mikey | Python Project",
+    font=("Arial", 10),
+    bg="lightblue",
+    fg="gray"
+)
+footer.pack(side=BOTTOM, pady=10)
+
+root.mainloop()
